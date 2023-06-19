@@ -12,7 +12,8 @@ export const print1Bit = (font: JsonBDFFont, lineHeight: number, width: number, 
         rows[i] = ''
     }
 
-    for (let i = 0; i < text.length; i++) {
+
+    for (let i = 0, pos = 0; i < text.length; i++) {
         const glyph = font.glyphs[text.charCodeAt(i)]
         const empty = ' '.repeat(glyph.dWidth.dwx0)
 
@@ -20,13 +21,28 @@ export const print1Bit = (font: JsonBDFFont, lineHeight: number, width: number, 
         const padLeft = ' '.repeat(glyph.bbx.xOffsX)
 
         const dy = lineHeight - glyph.bbx.h + font.fontBoundingBox[3] - glyph.bbx.yOffsY
-        console.log(text[i], text.charCodeAt(i), lineHeight, glyph.bbx, dy)
-        for (let i = lineHeight - 1; i >= 0; i--) {
-            const y = i - dy
-            rows[i] += y >= 0 && y < glyph.bitmap.length
-                ? padLeft + glyph.bitmap[i - dy] + padRight
-                : empty
+        for (let lineY = lineHeight - 1; lineY >= 0; lineY--) {
+            const y = lineY - dy
+
+            if (y >= 0 && y < glyph.bitmap.length) {
+                rows[lineY] += padLeft + glyph.bitmap[lineY - dy] + padRight
+                for (let x = 0; x < glyph.bbx.w; x++) {
+                    if (glyph.bitmap[lineY - dy][x] !== ' ') {
+                        const xx = x + pos + glyph.bbx.xOffsX
+                        if ((xx >> 3) < byteWidth) {
+                            const byteIndex = (xx >> 3) + lineY * byteWidth
+                            const bitValue = 1 << (xx % 8)
+                            buffer[byteIndex] |= bitValue
+                        }
+                    }
+                }
+
+            } else {
+                rows[lineY] += empty
+            }
         }
+
+        pos += glyph.dWidth.dwx0
     }
 
     console.log(rows)
