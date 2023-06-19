@@ -30,7 +30,7 @@ export const print1Bit = (font: JsonBDFFont, lineHeight: number, width: number, 
                         const xx = x + pos + glyph.bbx.xOffsX
                         if ((xx >> 3) < byteWidth) {
                             const byteIndex = (xx >> 3) + lineY * byteWidth
-                            const bitValue = 1 << (xx % 8)
+                            const bitValue = 1 << (7 - (xx % 8))
 
                             buffer[byteIndex] |= bitValue
                         }
