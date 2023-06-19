@@ -1,4 +1,4 @@
-import { Lines } from "."
+import { Lines } from "./main"
 import { Glyph } from ".."
 import { BBX, DWidth, SWidth } from "../types"
 import { parse } from "./parse-line"

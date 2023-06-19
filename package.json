@@ -12,7 +12,7 @@
     "lint": "eslint . --fix",
     "test": "jest"
   },
-  "name": "bdf-print-to-buffer",
+  "name": "bdf-print",
   "version": "1.0.0",
   "main": "dist/index.js",
   "repository": {
@@ -33,5 +33,9 @@
   },
   "homepage": "https://github.com/kodmax/bdf-print#readme",
   "description": "",
-  "bin": "./dist/convert/index.js"
+  "bin": "./dist/convert/index.js",
+  "dependencies": {
+    "@types/node": "^20.3.1",
+    "commander": "^11.0.0"
+  }
 }

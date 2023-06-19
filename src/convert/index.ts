@@ -1,31 +1,28 @@
 #!/usr/bin/env node
+import { Command } from 'commander'
+import { main } from './main'
 
-import { readFile, writeFile } from 'fs/promises'
-import { readFont } from './font'
-
-export type Lines = { 
-    buffer: string[]
-    shift: () => string
-    index: number
+export type Options = {
+    asciiOnly: boolean
+    include: string
 }
 
-const main = async (path: string, targetPath: string, include?: string): Promise<void> => {
-    const lines: Lines = {
-        buffer: (await readFile(path, { encoding: 'utf-8', flag: 'r' })).split(/\r?\n/),
-        shift: function (): string {
-            return this.buffer[this.index++]
-        },
-        index: 0
-    } 
-    const start = lines.shift()
+const program = new Command()
 
-    if (start?.startsWith('STARTFONT ')) {
-        const font = readFont(start.slice('STARTFONT '.length), lines, include?.split('').map(c => c.charCodeAt(0)))
-        await writeFile(targetPath, JSON.stringify(font, null, 2), { encoding: 'utf-8'})
+program
+    .name('bdf-print')
+    .usage('<command> [options]')
+    .description('CLI to convert BDF bitmap fonts files into json files usable with bdf-print library.')
+    .version('1.0.0');
 
-    } else {
-        throw new Error('Invalid font file')
-    }
-}
+program.command('convert')
+    .description('Converts a BDF font file into Font json readably by bdf-print library')
+    .argument('<src-path>', 'path to the bdf file')
+    .argument('[target-path')
+    .option('-a, --ascii-only', 'Include only characters from 0 to 127', false)
+    .option('-i, --include <chars>', 'include listed characters', '')
+    .action((srcPath: string, targetPath: string | undefined, options: Options) => {
+        main(srcPath, targetPath ?? srcPath + '.json', options)
+    })
 
-main(process.argv[2], process.argv[3], process.argv[4])
+program.parse()
