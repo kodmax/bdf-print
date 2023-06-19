@@ -1,5 +1,5 @@
 import { Lines } from "."
-import { Glyph, JsonBDFFont } from "../types"
+import { Glyph, JsonBDFFont } from ".."
 import { readCharacter } from "./character"
 import { parse } from "./parse-line"
 
@@ -37,6 +37,10 @@ export const readFont = (version: string, lines: Lines, include?: number[]): Jso
                     case 'COMMENT':
                         font.comment = values[0] as string
                         break
+                    
+                    case 'CONTENTVERSION':
+                        font.contentVersion = values[0] as number
+                        break
 
                     case 'FONT':
                         font.font = values[0] as string
@@ -50,6 +54,10 @@ export const readFont = (version: string, lines: Lines, include?: number[]): Jso
                         font.fontBoundingBox = values as number[]
                         break
 
+                    case 'METRICSSET':
+                        font.metricsSet = values[0] as number
+                        break
+                    
                     case 'CHARS':
                         font.chars = values[0] as number
                         break

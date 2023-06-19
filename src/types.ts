@@ -1,19 +1,16 @@
-export type Glyph = {
-    encoding: number
-    sWidth: number[]
-    dWidth: number[]
-    bbx: number[]
-    bitmap: string[]
-    name: string
+export type BBX = {
+    w: number
+    h: number
+    xOffsX: number
+    yOffsY: number
+} 
+
+export type DWidth = {
+    dwx0: number
+    dwy0: number
 }
 
-export type JsonBDFFont = {
-    properties: Record<string, Array<string | number>>
-    comment?: string
-    font: string
-    size: number[]
-    fontBoundingBox: number[]
-    chars: number
-    glyphs: Record<number, Glyph>
-    version: string
+export type SWidth = {
+    swx0: number
+    swy0: number
 }
