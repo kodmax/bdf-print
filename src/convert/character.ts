@@ -1,16 +1,8 @@
 import { Lines } from "."
+import { Glyph } from "../types"
 import { parse } from "./parse-line"
 
-export type Character = {
-    encoding: number
-    sWidth: number[]
-    dWidth: number[]
-    bbx: number[]
-    bitmap: string[]
-    name: string
-}
-
-export const readCharacter = (name: string, lines: Lines): Character => {
+export const readCharacter = (name: string, lines: Lines): Glyph => {
     const properties: Record<string, Array<string | number>> = {}
     const bitmap: string[] = []
 

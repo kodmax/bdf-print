@@ -1,22 +1,12 @@
 import { Lines } from "."
-import { Character, readCharacter } from "./character"
+import { Glyph, JsonBDFFont } from "../types"
+import { readCharacter } from "./character"
 import { parse } from "./parse-line"
 
-export type Font = {
-    properties: Record<string, Array<string | number>>
-    comment: string
-    font: string
-    size: number[]
-    fontBoundingBox: number[]
-    chars: number
-    characters: Record<number, Character>
-    version: string
-}
-
-export const readFont = (version: string, lines: Lines, include?: number[]): Font => {
+export const readFont = (version: string, lines: Lines, include?: number[]): JsonBDFFont => {
     const properties: Record<string, Array<string | number>> = {}
-    const characters: Record<number, Character> = {}
-    const font: Partial<Font> = {}
+    const glyphs: Record<number, Glyph> = {}
+    const font: Partial<JsonBDFFont> = {}
 
     for (let line = lines.shift(); line; line = lines.shift()) {
         const [key, values] = parse(line)
@@ -25,7 +15,7 @@ export const readFont = (version: string, lines: Lines, include?: number[]): Fon
             if (key === 'STARTCHAR') {
                 const char = readCharacter(String(values[0]), lines)
                 if (!include || char.encoding <= 127 || include.includes(char.encoding)) {
-                    characters[char.encoding] = char
+                    glyphs[char.encoding] = char
                 }
 
             } else if (key === 'STARTPROPERTIES') {
@@ -72,9 +62,9 @@ export const readFont = (version: string, lines: Lines, include?: number[]): Fon
     }
 
     return {
-        ...(font as Font),
+        ...(font as JsonBDFFont),
         properties,
-        characters,
+        glyphs,
         version
     }
 }
